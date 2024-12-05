@@ -1,6 +1,7 @@
 from flask import Flask
 from models import db
 from routes.ar_gee import student_bp, practice_unit_bp, practice_statistics_bp, practice_answers_bp, practice_questions_bp
+from routes.ar_gee_teaching import answers_bp, questions_bp, statistics_bp, tc_students_bp, units_bp, users_bp
 from config import SQLALCHEMY_BINDS, SQLALCHEMY_TRACK_MODIFICATIONS
 
 app = Flask(__name__)
@@ -17,7 +18,13 @@ blueprints = [
     practice_unit_bp,
     practice_statistics_bp,
     practice_answers_bp,
-    practice_questions_bp
+    practice_questions_bp,
+    answers_bp,
+    questions_bp,
+    statistics_bp,
+    tc_students_bp,
+    units_bp,
+    users_bp
 ]
 
 # 註冊所有 Blueprint
@@ -27,5 +34,5 @@ for blueprint in blueprints:
 if __name__ == "__main__":
     with app.app_context():
         db.create_all("ar_gee")  # 創建 ar_gee 資料庫的資料表
-        # db.create_all("ar_gee_teaching") # 創建 ar_gee_teaching 資料庫的資料表
+        db.create_all("ar_gee_teaching") # 創建 ar_gee_teaching 資料庫的資料表
     app.run(debug=True)
