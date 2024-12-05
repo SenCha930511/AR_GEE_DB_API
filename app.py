@@ -1,6 +1,6 @@
 from flask import Flask
 from models import db
-from routes.student_routes import student_bp
+from routes.ar_gee import student_bp, practice_unit_bp, practice_statistics_bp, practice_answers_bp, practice_questions_bp
 from config import SQLALCHEMY_BINDS, SQLALCHEMY_TRACK_MODIFICATIONS
 
 app = Flask(__name__)
@@ -11,8 +11,18 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = SQLALCHEMY_TRACK_MODIFICATIONS
 
 db.init_app(app)  # 初始化 SQLAlchemy
 
-# 註冊路由 Blueprint
-app.register_blueprint(student_bp)
+# 定義 Blueprint 列表
+blueprints = [
+    student_bp,
+    practice_unit_bp,
+    practice_statistics_bp,
+    practice_answers_bp,
+    practice_questions_bp
+]
+
+# 註冊所有 Blueprint
+for blueprint in blueprints:
+    app.register_blueprint(blueprint)
 
 if __name__ == "__main__":
     with app.app_context():

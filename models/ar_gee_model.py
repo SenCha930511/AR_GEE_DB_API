@@ -27,8 +27,8 @@ class PracticeStatistics(db.Model):
     __bind_key__ = DB_NAME
     __tablename__ = "practice_statistics"
 
-    student_id = db.Column(db.Text, nullable=False)
-    unit_id = db.Column(db.Text, nullable=False)
+    student_id = db.Column(db.Text, nullable=False, primary_key=True)
+    unit_id = db.Column(db.Text, nullable=False, primary_key=True)
     total_correct = db.Column(db.Integer, nullable=False)
     total_questions = db.Column(db.Integer, default=3, nullable=False)
     accuracy_rate = db.Column(db.Float, nullable=False)
