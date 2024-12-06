@@ -1,5 +1,4 @@
 import requests
-import json
 
 def add_user():
     url = "http://localhost:5000/users"
@@ -31,4 +30,22 @@ def auth():
 
     print(r.text)
 
-auth()
+def delete_user():
+    url = "http://localhost:5000/users/user_9f2a4b6d7e"
+    r = requests.delete(url)
+
+def update_user():
+    url = "http://localhost:5000/users/user_94b6755e"
+    payload = { 
+        "username": "teacher001",
+        "old_password": "123456",
+        "new_password": "test001",
+        "role": "teacher"
+    }
+
+    headers = {'Content-Type': 'application/json'}
+
+    r = requests.put(url, json=payload, headers=headers)
+    print(r.text)
+
+update_user()

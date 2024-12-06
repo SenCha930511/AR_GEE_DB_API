@@ -78,15 +78,21 @@ def update_user(user_id):
     # 更新用戶名
     user.username = data.get("username", user.username)
 
-    # 如果有提供密碼，則更新並加密
-    if data.get("password"):
-        user.password = generate_password_hash(data.get("password"))
+    # 如果有提供新密碼，則需要先驗證舊密碼
+    if data.get("new_password") and data.get("old_password"):
+        # 驗證舊密碼是否正確
+        if not check_password_hash(user.password, data.get("old_password")):
+            return jsonify({"error": "Old password is incorrect"}), 400
+        
+        # 更新密碼並加密
+        user.password = generate_password_hash(data.get("new_password"))
 
     # 更新角色
     user.role = data.get("role", user.role)
 
     db.session.commit()
     return jsonify({"message": "User updated successfully"})
+
 
 # 刪除用戶資料
 @users_bp.route("/users/<user_id>", methods=["DELETE"])
