@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
 from models.ar_gee_model import PracticeAnswers
 from models import db
+import uuid
+from datetime import datetime
 
 # 定義 Blueprint
 practice_answers_bp = Blueprint("practice_answers_bp", __name__)
@@ -9,18 +11,24 @@ practice_answers_bp = Blueprint("practice_answers_bp", __name__)
 @practice_answers_bp.route("/practice_answers", methods=["POST"])
 def add_practice_answer():
     data = request.json
+    # 生成唯一的 practice_answer_id
+    practice_answer_id = str(uuid.uuid4())
+
+    # 設定 test_date 為今天的日期
+    test_date = datetime.now()
+
     new_answer = PracticeAnswers(
-        practice_answer_id=data["practice_answer_id"],
+        practice_answer_id=practice_answer_id,
         student_id=data["student_id"],
         practice_question_id=data["practice_question_id"],
         is_correct=data["is_correct"],
         response_time=data["response_time"],
-        test_date=data["test_date"],
+        test_date=test_date,  # 使用今天的日期
         incorrect_attempts=data["incorrect_attempts"]
     )
     db.session.add(new_answer)
     db.session.commit()
-    return jsonify({"message": "Practice answer added successfully"}), 201
+    return jsonify({"message": "Practice answer added successfully", "practice_answer_id": practice_answer_id}), 201
 
 # 查詢所有練習答案資料
 @practice_answers_bp.route("/practice_answers", methods=["GET"])
@@ -32,7 +40,7 @@ def get_practice_answers():
         "practice_question_id": answer.practice_question_id,
         "is_correct": answer.is_correct,
         "response_time": str(answer.response_time),
-        "test_date": answer.test_date.strftime("%Y-%m-%d %H:%M:%S"),
+        "test_date": answer.test_date.strftime("%Y-%m-%d %H:%M:%S"),  # 格式化 test_date
         "incorrect_attempts": answer.incorrect_attempts
     } for answer in answers]
     return jsonify(answer_list)
@@ -49,7 +57,7 @@ def get_practice_answer(practice_answer_id):
         "practice_question_id": answer.practice_question_id,
         "is_correct": answer.is_correct,
         "response_time": str(answer.response_time),
-        "test_date": answer.test_date.strftime("%Y-%m-%d %H:%M:%S"),
+        "test_date": answer.test_date.strftime("%Y-%m-%d %H:%M:%S"),  # 格式化 test_date
         "incorrect_attempts": answer.incorrect_attempts
     }
     return jsonify(answer_data)
@@ -64,7 +72,7 @@ def update_practice_answer(practice_answer_id):
     data = request.json
     answer.is_correct = data.get("is_correct", answer.is_correct)
     answer.response_time = data.get("response_time", answer.response_time)
-    answer.test_date = data.get("test_date", answer.test_date)
+    answer.test_date = data.get("test_date", answer.test_date)  # 可以選擇不修改日期
     answer.incorrect_attempts = data.get("incorrect_attempts", answer.incorrect_attempts)
 
     db.session.commit()

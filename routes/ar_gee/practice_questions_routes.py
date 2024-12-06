@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from models.ar_gee_model import PracticeQuestions
 from models import db
+import uuid
 
 # 定義 Blueprint
 practice_questions_bp = Blueprint("practice_questions_bp", __name__)
@@ -9,13 +10,16 @@ practice_questions_bp = Blueprint("practice_questions_bp", __name__)
 @practice_questions_bp.route("/practice_questions", methods=["POST"])
 def add_practice_question():
     data = request.json
+    # 生成唯一的 practice_question_id
+    practice_question_id = str(uuid.uuid4())
+
     new_question = PracticeQuestions(
-        practice_question_id=data["practice_question_id"],
+        practice_question_id=practice_question_id,
         unit_id=data["unit_id"]
     )
     db.session.add(new_question)
     db.session.commit()
-    return jsonify({"message": "Practice question added successfully"}), 201
+    return jsonify({"message": "Practice question added successfully", "practice_question_id": practice_question_id}), 201
 
 # 查詢所有練習題目
 @practice_questions_bp.route("/practice_questions", methods=["GET"])

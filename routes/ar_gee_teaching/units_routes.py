@@ -1,3 +1,4 @@
+import uuid
 from flask import Blueprint, request, jsonify
 from models.ar_gee_teaching_model import Units
 from models import db
@@ -35,14 +36,18 @@ def get_unit(unit_id):
 @units_bp.route("/units", methods=["POST"])
 def create_unit():
     data = request.json
+    
+    # 生成唯一的 unit_id
+    generated_unit_id = f"unit_{uuid.uuid4().hex[:8]}"
+    
     unit = Units(
-        unit_id=data.get("unit_id"),
+        unit_id=generated_unit_id,
         unit_name=data.get("unit_name"),
         video_code=data.get("video_code")
     )
     db.session.add(unit)
     db.session.commit()
-    return jsonify({"message": "Unit created successfully"}), 201
+    return jsonify({"message": "Unit created successfully", "unit_id": generated_unit_id}), 201
 
 # 更新單元資料
 @units_bp.route("/units/<unit_id>", methods=["PUT"])

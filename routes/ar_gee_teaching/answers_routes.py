@@ -1,6 +1,8 @@
+import uuid
 from flask import Blueprint, request, jsonify
 from models.ar_gee_teaching_model import Answers
 from models import db
+from datetime import datetime
 
 # 定義 Blueprint
 answers_bp = Blueprint("answers_bp", __name__)
@@ -9,17 +11,31 @@ answers_bp = Blueprint("answers_bp", __name__)
 @answers_bp.route("/answers", methods=["POST"])
 def add_answer():
     data = request.json
+
+    # 檢查必填欄位
+    required_fields = ["student_id", "is_correct", "response_time", "incorrect_attempts"]
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"error": f"Missing required field: {field}"}), 400
+
+    # 生成唯一 answer_id
+    generated_answer_id = f"answer_{uuid.uuid4().hex[:8]}"
+
+    # 設定 test_date 為今天的日期
+    test_date = datetime.now()
+
+    # 建立答案資料
     new_answer = Answers(
-        answer_id=data["answer_id"],
+        answer_id=generated_answer_id,
         student_id=data["student_id"],
         is_correct=data["is_correct"],
         response_time=data["response_time"],
-        test_date=data["test_date"],
+        test_date=test_date,  # 使用今天的日期
         incorrect_attempts=data["incorrect_attempts"]
     )
     db.session.add(new_answer)
     db.session.commit()
-    return jsonify({"message": "Answer added successfully"}), 201
+    return jsonify({"message": "Answer added successfully", "answer_id": generated_answer_id}), 201
 
 # 查詢所有答案資料
 @answers_bp.route("/answers", methods=["GET"])

@@ -9,6 +9,14 @@ practice_unit_bp = Blueprint("practice_unit_bp", __name__)
 @practice_unit_bp.route("/practice_units", methods=["POST"])
 def add_practice_unit():
     data = request.json
+
+    # 檢查必填欄位
+    required_fields = ["unit_id", "unit_name", "video_code"]
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"error": f"Missing required field: {field}"}), 400
+
+    # 新增練習單元資料
     new_unit = PracticeUnits(
         unit_id=data["unit_id"],
         unit_name=data["unit_name"],

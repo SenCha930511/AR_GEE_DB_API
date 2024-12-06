@@ -1,3 +1,4 @@
+import uuid
 from flask import Blueprint, request, jsonify
 from models.ar_gee_teaching_model import Questions
 from models import db
@@ -9,13 +10,22 @@ questions_bp = Blueprint("questions_bp", __name__)
 @questions_bp.route("/questions", methods=["POST"])
 def add_question():
     data = request.json
+
+    # 檢查必填欄位
+    if not data.get("unit_id"):
+        return jsonify({"error": "Missing required field: unit_id"}), 400
+
+    # 生成唯一 question_id
+    generated_question_id = f"question_{uuid.uuid4().hex[:8]}"
+
+    # 建立問題資料
     new_question = Questions(
-        question_id=data["question_id"],
+        question_id=generated_question_id,
         unit_id=data["unit_id"]
     )
     db.session.add(new_question)
     db.session.commit()
-    return jsonify({"message": "Question added successfully"}), 201
+    return jsonify({"message": "Question added successfully", "question_id": generated_question_id}), 201
 
 # 查詢所有問題資料
 @questions_bp.route("/questions", methods=["GET"])

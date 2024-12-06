@@ -9,10 +9,17 @@ student_bp = Blueprint("student_bp", __name__)
 @student_bp.route("/students", methods=["POST"])
 def add_student():
     data = request.json
+
+    # 檢查必填欄位
+    required_fields = ["student_id", "username", "age", "disorder_category", "created_at"]
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"error": f"Missing required field: {field}"}), 400
+
+    # 新增學生資料
     new_student = Students(
         student_id=data["student_id"],
         username=data["username"],
-        password=data["password"],
         age=data["age"],
         disorder_category=data["disorder_category"],
         created_at=data["created_at"]
@@ -58,11 +65,10 @@ def update_student(student_id):
 
     data = request.json
     student.username = data.get("username", student.username)
-    student.password = data.get("password", student.password)
     student.age = data.get("age", student.age)
     student.disorder_category = data.get("disorder_category", student.disorder_category)
     student.created_at = data.get("created_at", student.created_at)
-    
+
     db.session.commit()
     return jsonify({"message": "Student updated successfully"})
 
