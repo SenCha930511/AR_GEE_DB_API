@@ -16,14 +16,23 @@ def add_practice_answer():
 
     # 設定 test_date 為今天的日期
     test_date = datetime.now()
+     
+    total_seconds = data["response_time"]
+    hours = int(total_seconds // 3600)
+    minutes = int((total_seconds % 3600) // 60)
+    seconds = int(total_seconds % 60)
+    formatted_response_time = f"{hours:02}:{minutes:02}:{seconds:02}"
+    
+    print(formatted_response_time)
 
+    # 建立新的練習答案實例
     new_answer = PracticeAnswers(
         practice_answer_id=practice_answer_id,
         student_id=data["student_id"],
         practice_question_id=data["practice_question_id"],
         is_correct=data["is_correct"],
-        response_time=data["response_time"],
-        test_date=test_date,  # 使用今天的日期
+        response_time=formatted_response_time,
+        test_date=test_date,
         incorrect_attempts=data["incorrect_attempts"]
     )
     db.session.add(new_answer)
@@ -45,12 +54,17 @@ def get_practice_answers():
     } for answer in answers]
     return jsonify(answer_list)
 
-# 根據 practice_answer_id 查詢特定練習答案
-@practice_answers_bp.route("/practice_answers/<practice_answer_id>", methods=["GET"])
-def get_practice_answer(practice_answer_id):
-    answer = PracticeAnswers.query.get(practice_answer_id)
+# 根據 student_id 和 question_id 查詢練習答案資料
+@practice_answers_bp.route("/practice_answers/<student_id>&<question_id>", methods=["GET"])
+def get_practice_answer(student_id, question_id):
+    answer = PracticeAnswers.query.filter(
+        PracticeAnswers.student_id == student_id,
+        PracticeAnswers.practice_question_id == question_id  # 使用 question_id 作為過濾條件
+    ).order_by(PracticeAnswers.test_date.desc()).first()
+    
     if not answer:
         return jsonify({"error": "Practice answer not found"}), 404
+    
     answer_data = {
         "practice_answer_id": answer.practice_answer_id,
         "student_id": answer.student_id,
@@ -63,9 +77,13 @@ def get_practice_answer(practice_answer_id):
     return jsonify(answer_data)
 
 # 更新練習答案資料
-@practice_answers_bp.route("/practice_answers/<practice_answer_id>", methods=["PUT"])
-def update_practice_answer(practice_answer_id):
-    answer = PracticeAnswers.query.get(practice_answer_id)
+@practice_answers_bp.route("/practice_answers/<student_id>&<question_id>", methods=["PUT"])
+def update_practice_answer(student_id, question_id):
+    answer = PracticeAnswers.query.filter(
+        PracticeAnswers.student_id == student_id,
+        PracticeAnswers.practice_question_id == question_id  # 使用 question_id 作為過濾條件
+    ).order_by(PracticeAnswers.test_date.desc()).first()
+    
     if not answer:
         return jsonify({"error": "Practice answer not found"}), 404
 
@@ -79,9 +97,13 @@ def update_practice_answer(practice_answer_id):
     return jsonify({"message": "Practice answer updated successfully"})
 
 # 刪除練習答案資料
-@practice_answers_bp.route("/practice_answers/<practice_answer_id>", methods=["DELETE"])
-def delete_practice_answer(practice_answer_id):
-    answer = PracticeAnswers.query.get(practice_answer_id)
+@practice_answers_bp.route("/practice_answers/<student_id>&<question_id>", methods=["DELETE"])
+def delete_practice_answer(student_id, question_id):
+    answer = PracticeAnswers.query.filter(
+        PracticeAnswers.student_id == student_id,
+        PracticeAnswers.practice_question_id == question_id  # 使用 question_id 作為過濾條件
+    ).order_by(PracticeAnswers.test_date.desc()).first()
+    
     if not answer:
         return jsonify({"error": "Practice answer not found"}), 404
 

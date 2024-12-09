@@ -8,6 +8,7 @@ class Answers(db.Model):
 
     answer_id = db.Column(db.String(255), primary_key=True)
     student_id = db.Column(db.Text, nullable=False)
+    question_id = db.Column(db.Text, nullable=False)
     is_correct = db.Column(db.Boolean, nullable=False)
     response_time = db.Column(db.Time, nullable=False)
     test_date = db.Column(db.DateTime, nullable=False)
