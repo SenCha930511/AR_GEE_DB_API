@@ -11,7 +11,7 @@ practice_questions_bp = Blueprint("practice_questions_bp", __name__)
 def add_practice_question():
     data = request.json
     # 生成唯一的 practice_question_id
-    practice_question_id = str(uuid.uuid4())
+    practice_question_id = f"practice_question_{uuid.uuid4().hex[:8]}"
 
     new_question = PracticeQuestions(
         practice_question_id=practice_question_id,

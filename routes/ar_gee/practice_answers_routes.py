@@ -12,7 +12,7 @@ practice_answers_bp = Blueprint("practice_answers_bp", __name__)
 def add_practice_answer():
     data = request.json
     # 生成唯一的 practice_answer_id
-    practice_answer_id = str(uuid.uuid4())
+    practice_answer_id = f"practice_answer_{uuid.uuid4().hex[:8]}"
 
     # 設定 test_date 為今天的日期
     test_date = datetime.now()
