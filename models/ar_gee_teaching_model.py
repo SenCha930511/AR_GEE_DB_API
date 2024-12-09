@@ -62,6 +62,7 @@ class Users(db.Model):
     __tablename__ = 'users'
 
     user_id = db.Column(db.String(255), primary_key=True)
+    student_id = db.Column(db.Text, nullable=False)
     username = db.Column(db.Text, nullable=False)
     password = db.Column(db.Text, nullable=False)
     role = db.Column(db.Text, nullable=False)

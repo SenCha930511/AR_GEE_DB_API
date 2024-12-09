@@ -14,6 +14,7 @@ def get_users():
     users_data = [
         {
             "user_id": user.user_id,
+            "student_id": user.student_id,
             "username": user.username,
             "role": user.role,
             "created_at": user.created_at.strftime("%Y-%m-%d %H:%M:%S")
@@ -30,6 +31,7 @@ def get_user(user_id):
         return jsonify({"error": "User not found"}), 404
     user_data = {
         "user_id": user.user_id,
+        "student_id": user.student_id,
         "username": user.username,
         "role": user.role,
         "created_at": user.created_at.strftime("%Y-%m-%d %H:%M:%S")
@@ -56,6 +58,7 @@ def create_user():
     # 創建新用戶
     user = Users(
         user_id=generated_user_id,
+        student_id=data.get("student_id"),
         username=data.get("username"),
         password=hashed_password,
         role=data.get("role"),
@@ -117,4 +120,4 @@ def authenticate_user():
     if not user or not check_password_hash(user.password, data.get("password")):
         return jsonify({"error": "Invalid username or password"}), 401
 
-    return jsonify({"message": "Authentication successful", "user_id": user.user_id})
+    return jsonify({"message": "Authentication successful", "user_id": user.user_id, "role": user.role, "student_id": user.student_id})

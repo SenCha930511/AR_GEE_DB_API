@@ -11,8 +11,7 @@ answers_bp = Blueprint("answers_bp", __name__)
 @answers_bp.route("/answers", methods=["POST"])
 def add_answers():
     data = request.json
-
-    print(data)
+    
     # 生成唯一的 answer_id
     answer_id = f"answers_{uuid.uuid4().hex[:8]}"
 
@@ -57,7 +56,7 @@ def get_answers():
     return jsonify(answer_list)
 
 # 根據 student_id 和 question_id 查詢練習答案資料
-@answers_bp.route("/answers/<student_id>&<question_id>", methods=["GET"])
+@answers_bp.route("/answers/<student_id>/<question_id>", methods=["GET"])
 def get_answer(student_id, question_id):
     answer = Answers.query.filter(
         Answers.student_id == student_id,
@@ -79,7 +78,7 @@ def get_answer(student_id, question_id):
     return jsonify(answer_data)
 
 # 更新練習答案資料
-@answers_bp.route("/answers/<student_id>&<question_id>", methods=["PUT"])
+@answers_bp.route("/answers/<student_id>/<question_id>", methods=["PUT"])
 def update_answer(student_id, question_id):
     answer = Answers.query.filter(
         Answers.student_id == student_id,
@@ -99,7 +98,7 @@ def update_answer(student_id, question_id):
     return jsonify({"message": "Answer updated successfully"})
 
 # 刪除練習答案資料
-@answers_bp.route("/answers/<student_id>&<question_id>", methods=["DELETE"])
+@answers_bp.route("/answers/<student_id>/<question_id>", methods=["DELETE"])
 def delete_answer(student_id, question_id):
     answer = Answers.query.filter(
         Answers.student_id == student_id,

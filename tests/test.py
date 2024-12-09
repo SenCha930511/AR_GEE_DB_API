@@ -3,9 +3,10 @@ import requests
 def add_user():
     url = "http://localhost:5000/users"
     payload = {
-        "username": "John",
-        "password": "123456",
-        "role": "teacher",
+        "username": "xiaming",
+        "password": "test001",
+        "role": "student",
+        "student_id": "student_a3f5c7d2e9"
     }
 
     headers = {'Content-Type': 'application/json'}
@@ -48,4 +49,4 @@ def update_user():
     r = requests.put(url, json=payload, headers=headers)
     print(r.text)
 
-update_user()
+add_user()
