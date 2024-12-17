@@ -13,7 +13,7 @@ def add_student():
     data = request.json
 
     # 檢查必填欄位
-    required_fields = ["username", "age", "disorder_category"]
+    required_fields = ["name", "age", "disorder_category"]
     for field in required_fields:
         if not data.get(field):
             return jsonify({"error": f"Missing required field: {field}"}), 400
@@ -27,7 +27,7 @@ def add_student():
     # 建立學生資料
     new_student = TcStudents(
         student_id=generated_student_id,
-        username=data["username"],
+        name=data["name"],
         age=data["age"],
         disorder_category=data["disorder_category"],
         created_at=created_at
@@ -42,7 +42,7 @@ def get_students():
     students = TcStudents.query.all()
     student_list = [{
         "student_id": student.student_id,
-        "username": student.username,
+        "name": student.name,
         "age": student.age,
         "disorder_category": student.disorder_category,
         "created_at": student.created_at.strftime("%Y-%m-%d %H:%M:%S")
@@ -57,7 +57,7 @@ def get_student(student_id):
         return jsonify({"error": "Student not found"}), 404
     student_data = {
         "student_id": student.student_id,
-        "username": student.username,
+        "name": student.name,
         "age": student.age,
         "disorder_category": student.disorder_category,
         "created_at": student.created_at.strftime("%Y-%m-%d %H:%M:%S")
@@ -72,7 +72,7 @@ def update_student(student_id):
         return jsonify({"error": "Student not found"}), 404
 
     data = request.json
-    student.username = data.get("username", student.username)
+    student.name = data.get("name", student.name)
     student.age = data.get("age", student.age)
     student.disorder_category = data.get("disorder_category", student.disorder_category)
 

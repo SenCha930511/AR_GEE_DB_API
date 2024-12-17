@@ -41,8 +41,7 @@ class TcStudents(db.Model):
     __tablename__ = 'students'
 
     student_id = db.Column(db.String(255), primary_key=True)
-    username = db.Column(db.Text, nullable=False)
-    password = db.Column(db.Text, nullable=False)
+    name = db.Column(db.Text, nullable=False)
     age = db.Column(db.Integer, nullable=False)
     disorder_category = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False)

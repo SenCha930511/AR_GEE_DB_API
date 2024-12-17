@@ -49,4 +49,23 @@ def update_user():
     r = requests.put(url, json=payload, headers=headers)
     print(r.text)
 
-add_user()
+def addStudent():
+    url = "http://localhost:5000/tc_students"
+
+    payload = {
+        "name": "John",
+        "age": 12,
+        "disorder_category": "ADHD"
+    }
+
+    headers = {'Content-Type': 'application/json'}
+    # Use 'json' instead of 'params'
+    r = requests.post(url, json=payload, headers=headers)
+    print(r.text)
+
+addStudent()
+
+
+
+
+
