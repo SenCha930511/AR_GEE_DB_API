@@ -43,8 +43,14 @@ def get_user(user_id):
 def create_user():
     data = request.json
 
+    # 檢查必填欄位是否存在
     if not data.get("username") or not data.get("password") or not data.get("role"):
         return jsonify({"error": "Missing required fields"}), 400
+
+    # 檢查資料庫是否已有相同的 username
+    existing_user = Users.query.filter_by(username=data.get("username")).first()
+    if existing_user:
+        return jsonify({"error": "Username already exists"}), 400
 
     # 生成唯一 user_id
     generated_user_id = f"user_{uuid.uuid4().hex[:8]}"
@@ -65,9 +71,12 @@ def create_user():
         created_at=created_at
     )
 
+    # 將新用戶加入資料庫並提交
     db.session.add(user)
     db.session.commit()
+
     return jsonify({"message": "User created successfully", "user_id": generated_user_id}), 201
+
 
 # 更新用戶資料
 @users_bp.route("/users/<user_id>", methods=["PUT"])

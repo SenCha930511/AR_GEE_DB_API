@@ -4,9 +4,9 @@ def add_user():
     url = "http://localhost:5000/users"
     payload = {
         "username": "xiaming",
-        "password": "test001",
+        "password": "test002",
         "role": "student",
-        "student_id": "student_a3f5c7d2e9"
+        "student_id": "student_1"
     }
 
     headers = {'Content-Type': 'application/json'}
@@ -21,8 +21,8 @@ def add_user():
 def auth():
     url = "http://localhost:5000/users/authenticate"
     payload ={
-        "username": "John",
-        "password": "1234567"
+        "username": "xiaming",
+        "password": "test002"
     }
 
     headers = {'Content-Type': 'application/json'}
@@ -63,7 +63,7 @@ def addStudent():
     r = requests.post(url, json=payload, headers=headers)
     print(r.text)
 
-addStudent()
+add_user()
 
 
 
