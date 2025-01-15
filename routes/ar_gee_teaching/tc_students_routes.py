@@ -13,10 +13,17 @@ def add_student():
     data = request.json
 
     # 檢查必填欄位
-    required_fields = ["name", "age", "disorder_category"]
+    required_fields = ["name", "age", "disorder_category", "gender"]
     for field in required_fields:
         if not data.get(field):
             return jsonify({"error": f"Missing required field: {field}"}), 400
+
+    # 解析 birth_date，如果提供的話
+    birth_date = data.get("birth_date")
+    if birth_date:
+        birth_date = datetime.strptime(birth_date, "%Y-%m-%d").date()
+    else:
+        birth_date = None
 
     # 生成唯一 student_id
     generated_student_id = f"student_{uuid.uuid4().hex[:8]}"
@@ -28,6 +35,8 @@ def add_student():
     new_student = TcStudents(
         student_id=generated_student_id,
         name=data["name"],
+        gender=data["gender"],
+        birth_date=birth_date,
         age=data["age"],
         disorder_category=data["disorder_category"],
         created_at=created_at
@@ -43,11 +52,13 @@ def get_students():
     student_list = [{
         "student_id": student.student_id,
         "name": student.name,
+        "gender": student.gender,
+        "birth_date": student.birth_date.strftime("%Y-%m-%d") if student.birth_date else None,
         "age": student.age,
         "disorder_category": student.disorder_category,
         "created_at": student.created_at.strftime("%Y-%m-%d %H:%M:%S")
     } for student in students]
-    return jsonify(student_list)
+    return jsonify(student_list), 200
 
 # 根據 student_id 查詢特定學生資料
 @tc_students_bp.route("/tc_students/<student_id>", methods=["GET"])
@@ -58,11 +69,13 @@ def get_student(student_id):
     student_data = {
         "student_id": student.student_id,
         "name": student.name,
+        "gender": student.gender,
+        "birth_date": student.birth_date.strftime("%Y-%m-%d"),
         "age": student.age,
         "disorder_category": student.disorder_category,
         "created_at": student.created_at.strftime("%Y-%m-%d %H:%M:%S")
     }
-    return jsonify(student_data)
+    return jsonify(student_data), 200
 
 # 更新學生資料
 @tc_students_bp.route("/tc_students/<student_id>", methods=["PUT"])
@@ -73,11 +86,20 @@ def update_student(student_id):
 
     data = request.json
     student.name = data.get("name", student.name)
+    student.gender = data.get("gender", student.gender)
+    
+    # 更新 birth_date
+    birth_date = data.get("birth_date")
+    if birth_date:
+        student.birth_date = datetime.strptime(birth_date, "%Y-%m-%d").date()
+    else:
+        student.birth_date = None
+
     student.age = data.get("age", student.age)
     student.disorder_category = data.get("disorder_category", student.disorder_category)
 
     db.session.commit()
-    return jsonify({"message": "Student updated successfully"})
+    return jsonify({"message": "Student updated successfully"}), 200
 
 # 刪除學生資料
 @tc_students_bp.route("/tc_students/<student_id>", methods=["DELETE"])
@@ -88,4 +110,4 @@ def delete_student(student_id):
 
     db.session.delete(student)
     db.session.commit()
-    return jsonify({"message": "Student deleted successfully"})
+    return jsonify({"message": "Student deleted successfully"}), 200

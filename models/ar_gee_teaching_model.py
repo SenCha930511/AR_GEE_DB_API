@@ -14,8 +14,7 @@ class Answers(db.Model):
     test_date = db.Column(db.DateTime, nullable=False)
     incorrect_attempts = db.Column(db.Integer, nullable=False)
 
-    def __repr__(self):
-        return f"<Answer(answer_id={self.answer_id}, student_id={self.student_id}, is_correct={self.is_correct}, response_time={self.response_time}, test_date={self.test_date}, incorrect_attempts={self.incorrect_attempts})>"
+
 
 class Questions(db.Model):
     __bind_key__ = DB_NAME
@@ -42,6 +41,8 @@ class TcStudents(db.Model):
 
     student_id = db.Column(db.String(255), primary_key=True)
     name = db.Column(db.Text, nullable=False)
+    gender = db.Column(db.Enum('男性', '女性', '其他', '', name='gender_enum'), nullable=False)
+    birth_date = db.Column(db.Date, nullable=False)
     age = db.Column(db.Integer, nullable=False)
     disorder_category = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False)
