@@ -77,6 +77,8 @@ python app.py
 
 ## 資料庫架構
 
+### ar_gee
+
 ### 1. PracticeAnswers
 - **資料表名稱**：practice_answers  
 - **綁定鍵**：ar_gee  
@@ -132,7 +134,7 @@ python app.py
 
 ---
 
-## 資料庫： ar_gee_teaching
+### ar_gee_teaching
 
 ### 1. Answers
 - **資料表名稱**：answers  
