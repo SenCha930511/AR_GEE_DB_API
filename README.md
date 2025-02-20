@@ -28,18 +28,21 @@
 ## 安裝與設定
 
 1. **Clone 專案：**
+
    ```bash
    git clone https://github.com/SenCha930511/AR_GEE_DB_API.git
 
-2. **進入專案目錄：**
+3. **進入專案目錄：**
+  
    ```bash
    cd AR_GEE_DB_API
 
-3. **安裝相依套件：**
+4. **安裝相依套件：**
+
    ```bash
    pip install -r requirements.txt
    
-4. **建立資料庫**
+6. **建立資料庫**
    在 MySQL 中匯入兩個資料庫：ar_gee（暫時沒使用） 與 ar_gee_teaching。
 
 ## 啟動 API
