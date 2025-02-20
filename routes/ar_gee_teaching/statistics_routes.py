@@ -5,11 +5,17 @@ from models import db
 # 定義 Blueprint
 statistics_bp = Blueprint("statistics_bp", __name__)
 
-# 新增統計資料
 @statistics_bp.route("/statistics", methods=["POST"])
 def add_statistic():
+    """
+    新增統計資料
+
+    從請求中取得統計資料並建立新的統計記錄。
+
+    :return: Tuple[jsonify, int] - 回傳成功訊息與 HTTP 狀態碼 201
+    """
     data = request.json
-    new_stat = Statistics(
+    new_stat: Statistics = Statistics(
         student_id=data["student_id"],
         unit_id=data["unit_id"],
         total_correct=data["total_correct"],
@@ -20,9 +26,14 @@ def add_statistic():
     db.session.commit()
     return jsonify({"message": "Statistic added successfully"}), 201
 
-# 查詢所有統計資料
+
 @statistics_bp.route("/statistics", methods=["GET"])
 def get_statistics():
+    """
+    查詢所有統計資料
+
+    :return: jsonify - 回傳所有統計資料的 JSON 列表
+    """
     stats = Statistics.query.all()
     stat_list = [{
         "student_id": stat.student_id,
@@ -33,10 +44,17 @@ def get_statistics():
     } for stat in stats]
     return jsonify(stat_list)
 
-# 根據 student_id 和 unit_id 查詢特定統計資料
+
 @statistics_bp.route("/statistics/<student_id>/<unit_id>", methods=["GET"])
-def get_statistic(student_id, unit_id):
-    stat = Statistics.query.filter_by(student_id=student_id, unit_id=unit_id).first()
+def get_statistic(student_id: str, unit_id: str):
+    """
+    根據 student_id 與 unit_id 查詢特定統計資料
+
+    :param student_id: str - 學生 ID
+    :param unit_id: str - 單元 ID
+    :return: jsonify - 回傳特定統計資料的 JSON 格式；若查無資料則回傳錯誤訊息
+    """
+    stat: Statistics = Statistics.query.filter_by(student_id=student_id, unit_id=unit_id).first()
     if not stat:
         return jsonify({"error": "Statistic not found"}), 404
     stat_data = {
@@ -48,10 +66,19 @@ def get_statistic(student_id, unit_id):
     }
     return jsonify(stat_data)
 
-# 更新統計資料
+
 @statistics_bp.route("/statistics/<student_id>/<unit_id>", methods=["PUT"])
-def update_statistic(student_id, unit_id):
-    stat = Statistics.query.filter_by(student_id=student_id, unit_id=unit_id).first()
+def update_statistic(student_id: str, unit_id: str):
+    """
+    更新指定統計資料
+
+    根據 student_id 與 unit_id 更新統計記錄。
+
+    :param student_id: str - 學生 ID
+    :param unit_id: str - 單元 ID
+    :return: jsonify - 回傳更新成功訊息；若查無資料則回傳錯誤訊息
+    """
+    stat: Statistics = Statistics.query.filter_by(student_id=student_id, unit_id=unit_id).first()
     if not stat:
         return jsonify({"error": "Statistic not found"}), 404
 
@@ -63,10 +90,19 @@ def update_statistic(student_id, unit_id):
     db.session.commit()
     return jsonify({"message": "Statistic updated successfully"})
 
-# 刪除統計資料
+
 @statistics_bp.route("/statistics/<student_id>/<unit_id>", methods=["DELETE"])
-def delete_statistic(student_id, unit_id):
-    stat = Statistics.query.filter_by(student_id=student_id, unit_id=unit_id).first()
+def delete_statistic(student_id: str, unit_id: str):
+    """
+    刪除指定統計資料
+
+    根據 student_id 與 unit_id 刪除統計記錄。
+
+    :param student_id: str - 學生 ID
+    :param unit_id: str - 單元 ID
+    :return: jsonify - 回傳刪除成功訊息；若查無資料則回傳錯誤訊息
+    """
+    stat: Statistics = Statistics.query.filter_by(student_id=student_id, unit_id=unit_id).first()
     if not stat:
         return jsonify({"error": "Statistic not found"}), 404
 
